@@ -10,7 +10,7 @@ public class CsvImport {
         ArrayList<Order> orders = new ArrayList<>();
         String current;
 
-        File csv = new File("src/Orders.csv");
+        File csv = new File("Orders.csv");
 
         Scanner sc = new Scanner(csv);
 
