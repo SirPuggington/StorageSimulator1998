@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 
 public class Gui {
@@ -8,13 +10,13 @@ public class Gui {
 
     private JPanel head;
     private JPanel foot;
-
+    private JButton startBtn;
     private JLabel logo;
-
+    private JLabel currentOrder;
+    private int currentOrderId;
+    private ArrayList<Order> orders;
 
     private JButton[] storageSlots = new JButton[24];
-    
-
 
     public Gui() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
@@ -24,29 +26,59 @@ public class Gui {
         this.head = new JPanel();
         this.foot = new JPanel();
         this.foot.setLayout(new BorderLayout());
-
+        this.startBtn=new JButton("START");
+        this.startBtn.setSize(150,50);
+        this.startBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    start();
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         this.logo = new JLabel(new ImageIcon("assets/logo.png"));
-
         this.head.add(logo);
-
 
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.frame.setSize(800, 600);
         this.frame.setLayout(new BorderLayout());
 
 
-        this.frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent) {
-                System.exit(0);
-            }
-        });
-        this.frame.setVisible(true);
         this.frame.add(head, BorderLayout.PAGE_START);
         this.frame.add(foot, BorderLayout.PAGE_END);
-        this.displayStorage();
-        this.displayOrders();
-        this.displayMoney();
+        frame.add(startBtn);
+        this.frame.setVisible(true);
+
+    }
+
+    private void start() throws FileNotFoundException {
+
+        frame.remove(startBtn);
+
+        displayStorage();
+        displayOrders();
+        displayMoney();
+
+        CsvImport imp=new CsvImport();
+        orders=imp.importOrders();
+        Order order= orders.get(currentOrderId);
+
+        if(order.in){
+            currentOrder.setText("INCOMING - "+order.product.getAttributes()+" - Reward: "+ order.reward);
+        }
+        else{
+            currentOrder.setText("OUTGOING - "+order.product.getAttributes()+" - Reward: "+ order.reward);
+
+        }
+        currentOrder.setIcon(order.product.getIcon());
+        System.out.println(order.product.getIcon());
+        currentOrderId=order.id;
+
+        SwingUtilities.updateComponentTreeUI(frame);
+
     }
 
 
@@ -139,7 +171,7 @@ public class Gui {
         JPanel orderPanel = new JPanel();
         JPanel modesPanel =new JPanel();
         JPanel rightSide =new JPanel();
-        JLabel currentOrder=new JLabel();
+        currentOrder= new JLabel();
         JButton skipOrderBtn = new JButton("Skip Current Order");
         JCheckBox moveMode =new JCheckBox("Move");
         JCheckBox scrapMode = new JCheckBox("Scrap");

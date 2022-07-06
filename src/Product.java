@@ -1,8 +1,19 @@
+import javax.swing.*;
+
 public class Product {
 
     String name;
-    String attr1;
-    String attr2;
+
+    public Product(){
+
+    }
+
+public String getAttributes(){
+        return"";
+}
 
 
+    public Icon getIcon() {
+        return new ImageIcon("");
+    }
 }

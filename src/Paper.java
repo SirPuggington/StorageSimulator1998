@@ -4,10 +4,11 @@ public class Paper extends Product{
 
     String color;
     String size;
-    String name="Paper";
+    String material="Paper";
     ImageIcon icon;
 
     public Paper(String color, String size){
+
         switch (color.toLowerCase()) {
             case "blau" -> {
                 this.color = "blue";
@@ -20,11 +21,16 @@ public class Paper extends Product{
             }
         }
         this.size=size;
-        this.icon = new ImageIcon("../assets/paper/"+this.color);
+        this.icon = new ImageIcon("assets/paper/"+this.color+".png");
 
     }
 
+    public String getAttributes(){
+        return material+": "+this.color+" "+this.size;
+    }
 
-
+    public ImageIcon getIcon() {
+        return icon;
+    }
 
 }
