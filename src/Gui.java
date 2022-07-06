@@ -57,6 +57,7 @@ public class Gui {
         this.frame.add(head, BorderLayout.PAGE_START);
         this.frame.add(foot, BorderLayout.PAGE_END);
         frame.add(startBtn);
+        this.frame.setLocationRelativeTo(null);
         this.frame.setVisible(true);
 
     }
@@ -211,7 +212,9 @@ public class Gui {
         moneyPanel.setLayout(new BorderLayout(10, 0));
         moneyPanel.add(icon, BorderLayout.LINE_START);
         moneyPanel.add(wallet, BorderLayout.CENTER);
-        balanceBtn.setPreferredSize(new Dimension(100, 20));
+
+        balanceBtn.setActionCommand("balance");
+        balanceBtn.addActionListener(auxBtnListener);
 
         financePanel.add(moneyPanel);
         financePanel.add(balanceBtn);
@@ -342,6 +345,70 @@ public class Gui {
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
+                    break;
+
+                case "balance":
+                    JFrame balanceWindow=new JFrame("Balance");
+                    balanceWindow.setSize(new Dimension(400, 400));
+                    balanceWindow.setLayout(new BorderLayout());
+
+                    JScrollPane balanceScoll = new JScrollPane();
+                    JPanel balanceTotal = new JPanel();
+
+                    String[] testNames = new String[2];
+                    String[][] testVals = new String[1000][2];
+
+                    testNames[0]="Action";
+                    testNames[1]="Value";
+
+                    testVals[0][0]="Test";
+                    testVals[1][0]="Test";
+                    testVals[2][0]="Test";
+                    testVals[3][0]="Test";
+                    testVals[0][1]="100";
+                    testVals[1][1]="750";
+                    testVals[2][1]="-30";
+                    testVals[3][1]="Test";
+
+
+                    ArrayList<String[]> Test = new ArrayList<>();
+
+                    Test.add(testNames);
+                    Test.add(testNames);
+                    Test.add(testNames);
+                    Test.add(testNames);
+                    Test.add(testNames);
+
+                    String[][] a= new String[Test.size()][];
+                    a=Test.toArray(a);
+
+
+                    System.out.println(testVals);
+                    System.out.println(testNames);
+
+                    JTable balanceRecordsTable =new JTable(a,testNames);
+
+                    balanceTotal.setLayout(new GridLayout(1,2));
+
+
+                    JLabel totalText = new JLabel("Total Funds");
+                    JLabel totalMoney = new JLabel(Integer.toString(funds));
+
+                    totalText.setHorizontalAlignment(JLabel.CENTER);
+                    totalMoney.setHorizontalAlignment(JLabel.CENTER);
+
+                    balanceScoll.getViewport().add(balanceRecordsTable);
+
+                    balanceWindow.add(balanceScoll, BorderLayout.CENTER);
+                    balanceWindow.add(balanceTotal, BorderLayout.PAGE_END);
+
+                    balanceTotal.add(totalText);
+                    balanceTotal.add(totalMoney);
+
+
+                    balanceWindow.setLocationRelativeTo(frame);
+                    balanceWindow.setVisible(true);
+
             }
 
             wallet.setText(String.valueOf(funds));
