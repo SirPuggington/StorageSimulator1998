@@ -4,16 +4,20 @@ public class Product {
 
     String name;
 
-    public Product(){
+    public Product() {
 
     }
 
-public String getAttributes(){
-        return"";
-}
+    public String getAttributes() {
+        return "";
+    }
 
 
     public Icon getIcon() {
         return new ImageIcon("");
+    }
+
+    public String getAttributesShort() {
+        return "";
     }
 }

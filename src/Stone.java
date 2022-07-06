@@ -32,13 +32,17 @@ public class Stone extends Product{
                 this.weightString="heavy";
             }
         }
-        this.icon=new ImageIcon("assets/"+this.type+".png");
+        this.icon=new ImageIcon("assets/stone/"+this.type+".png");
 
 
     }
 
     public String getAttributes(){
         return material+": "+this.weightString+" "+this.type;
+    }
+
+    public String getAttributesShort() {
+        return this.weightString + " " + this.type;
     }
 
     public ImageIcon getIcon() {

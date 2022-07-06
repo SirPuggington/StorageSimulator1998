@@ -29,6 +29,10 @@ public class Paper extends Product{
         return material+": "+this.color+" "+this.size;
     }
 
+    public String getAttributesShort() {
+        return this.size;
+    }
+
     public ImageIcon getIcon() {
         return icon;
     }

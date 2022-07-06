@@ -6,15 +6,15 @@ public class Wood extends Product {
     String type;
     ImageIcon icon;
     String iconShape;
-    String material="Wood";
+    String material = "Wood";
 
     public Wood(String type, String shape) {
 
 
         switch (type.toLowerCase()) {
-            case "birke" -> this.type = "beech";
+            case "buche" -> this.type = "beech";
             case "eiche" -> this.type = "oak";
-            case "fichte" -> this.type = "spruce";
+            case "kiefer" -> this.type = "pine";
         }
 
         switch (shape.toLowerCase()) {
@@ -32,14 +32,17 @@ public class Wood extends Product {
             }
         }
 
-        this.icon=new ImageIcon( "assets/wood/" + this.iconShape + "/" + this.type+".png");
-
-
+        this.icon = new ImageIcon("assets/wood/" + this.iconShape + "/" + this.type + ".png");
 
 
     }
-    public String getAttributes(){
-        return material+": "+this.type+" "+this.shape;
+
+    public String getAttributes() {
+        return material + ": " + this.type + " " + this.shape;
+    }
+
+    public String getAttributesShort() {
+        return this.type + " " + this.shape;
     }
 
     public ImageIcon getIcon() {

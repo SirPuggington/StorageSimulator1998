@@ -5,6 +5,7 @@ public class Storage {
     final Product[][][] shelf = new Product[4][3][2];
 
 
+
     public boolean action(Order order, int x, int y, int z) {
         boolean success;
         if (order.in) {
@@ -19,7 +20,12 @@ public class Storage {
 
     private boolean in(Order order, int x, int y, int z) {
 
-
+        System.out.println(order.product.getAttributes());
+        if(this.shelf[x][y][z]!=null) {
+            System.out.println(this.shelf[x][y][z].getAttributes());
+        }else {
+            System.out.println("empty");
+        }
         if (this.shelf[x][y][z] != null) {
             //SLOT IS NOT EMPTY
             return false;
@@ -61,22 +67,34 @@ public class Storage {
 
     private boolean out(Order order, int x, int y, int z) {
 
-        if(order.product==this.shelf[x][y][z]){
-            if (order.product instanceof Wood){
-                if (Objects.equals(((Wood) order.product).shape, "beam")){
-                    this.shelf[x][y][0]=null;
-                    this.shelf[x][y][1]=null;
+        System.out.println(order.product.getAttributes());
+        System.out.println(this.shelf[x][y][z].getAttributes());
 
+        if (this.shelf[x][y][z] != null) {
+            if (Objects.equals(order.product.getAttributes(), this.shelf[x][y][z].getAttributes())) {
+
+                if (order.product instanceof Wood) {
+                    if (Objects.equals(((Wood) order.product).shape, "beam")) {
+                        this.shelf[x][y][0] = null;
+                        this.shelf[x][y][1] = null;
+
+                    }}
+
+                if (z == 1 && this.shelf[x][y][0] != null) {
+                    //ITEM IS BLOCKED BY ANOTHER PALLET
+                    System.out.println("ITEM IS BLOCKED BY ANOTHER PALLET");
+                    return false;
                 }
-            }else if(z==1 && this.shelf[x][y][0]!=null){
-                //ITEM IS BLOCKED BY ANOTHER PALLET
+
+                this.shelf[x][y][z] = null;
+
+            } else {
+                //WRONG PRODUCT SELECTED
+                System.out.println("WRONG PRODUCT SELECTED");
                 return false;
-            }else{
-                this.shelf[x][y][z]=null;
             }
-        }else{
-            //WRONG PRODUCT SELECTED
-            return false;
+        } else {
+            System.out.println("SHELF IS EMPTY");
         }
 
         return true;
@@ -86,20 +104,19 @@ public class Storage {
                         int originX, int originY, int originZ) {
         boolean success;
 
-        Order moveOrder= new Order(0, true, this.shelf[originX][originY][originZ], -100);
+        Order moveOrder = new Order(0, true, this.shelf[originX][originY][originZ], -100);
 
-        if(action(moveOrder, targetX, targetY, targetZ)) {
-            this.shelf[originX][originY][originZ]=null;
-            if (moveOrder.product instanceof Wood){
-                if (Objects.equals(((Wood) moveOrder.product).shape, "beam")){
-                    this.shelf[originX][originY][1]=null;
+        if (action(moveOrder, targetX, targetY, targetZ)) {
+            this.shelf[originX][originY][originZ] = null;
+            if (moveOrder.product instanceof Wood) {
+                if (Objects.equals(((Wood) moveOrder.product).shape, "beam")) {
+                    this.shelf[originX][originY][1] = null;
                 }
             }
-            success=true;
-        }else{
-            success=false;
+            success = true;
+        } else {
+            success = false;
         }
-
 
 
 //        if (this.shelf[targetX][targetY][targetZ] == null) {
@@ -114,5 +131,27 @@ public class Storage {
 
         return success;
     }
+
+    public boolean scrap(int x, int y, int z){
+        boolean success;
+
+        if(this.shelf[x][y][z]!=null) {
+            if (this.shelf[x][y][z] instanceof Wood){
+                if (Objects.equals(((Wood) this.shelf[x][y][z]).shape, "beam")){
+                    this.shelf[x][y][1] = null;
+                    this.shelf[x][y][0] = null;
+                }
+            }
+            else{
+                this.shelf[x][y][z] = null;
+            }
+            success=true;
+        }else{
+            //NOTHING TO SCRAP
+            success=false;
+        }
+        return success;
+    }
+
 
 }
