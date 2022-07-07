@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class Wood extends Product {
 
@@ -47,6 +48,9 @@ public class Wood extends Product {
 
     public ImageIcon getIcon() {
         return icon;
+    }
+    public ImageIcon getLargeIcon(){
+        return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));
     }
 
 }

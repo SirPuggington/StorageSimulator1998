@@ -1,11 +1,12 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class Product {
 
-    String name;
+    ImageIcon icon;
 
     public Product() {
-
+        icon=new ImageIcon("");
     }
 
     public String getAttributes() {
@@ -14,10 +15,14 @@ public class Product {
 
 
     public Icon getIcon() {
-        return new ImageIcon("");
+        return icon;
     }
 
     public String getAttributesShort() {
         return "";
+    }
+
+    public ImageIcon getLargeIcon(){
+        return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));
     }
 }

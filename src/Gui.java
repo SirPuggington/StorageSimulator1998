@@ -17,10 +17,15 @@ public class Gui {
     private final JButton[] storageSlots = new JButton[24];
     private final JLabel[] storageSlotLabels = new JLabel[24];
 
-    JRadioButton order1 = new JRadioButton();
-    JRadioButton order2 = new JRadioButton();
-    JRadioButton order3 = new JRadioButton();
+
     ButtonGroup availableOrders = new ButtonGroup();
+
+    JButton[] newOrderBtns = new JButton[3];
+    JRadioButton[] orderRadios = new JRadioButton[3];
+    JLabel[] orderLabels = new JLabel[3];
+    JPanel[] orderPanels = new JPanel[3];
+    JPanel messagePanel= new JPanel();
+    JLabel messageLabel =new JLabel();
 
     public void setWallet(String val) {
         wallet.setText(val);
@@ -87,18 +92,22 @@ public class Gui {
         this.frame.setVisible(true);
         this.startBtn.setActionCommand("start");
 
-//        availableOrders.add(order1);
-//        availableOrders.add(order2);
-//        availableOrders.add(order3);
-//
-//        order1.setIcon(new ImageIcon("assets/paper/white.png"));
-//        order1.setText("EIN AUFTRAG");
-//        order2.setText("EIN AUFTRAG");
-//        order3.setText("EIN AUFTRAG");
-//
-//        order1.setVisible(false);
-//        order2.setVisible(false);
-//        order3.setVisible(false);
+        for (int i=0; i<3; i++){
+            orderRadios[i]=new JRadioButton();
+            orderLabels[i]=new JLabel();
+            newOrderBtns[i]=new JButton("New Order");
+            orderPanels[i]=new JPanel();
+            orderPanels[i].setLayout(new BorderLayout());
+            orderPanels[i].add(orderLabels[i],BorderLayout.CENTER);
+            orderPanels[i].add(orderRadios[i],BorderLayout.PAGE_START);
+            orderPanels[i].add(newOrderBtns[i],BorderLayout.CENTER);
+            orderRadios[i].setVisible(false);
+            availableOrders.add(orderRadios[i]);
+            orderLabels[i].setVisible(false);
+        }
+
+
+
 
 
     }
@@ -193,7 +202,7 @@ public class Gui {
     public void displayOrders(ActionListener auxBtnListener, ActionListener checkboxListener) {
         JPanel leftSide = new JPanel();
         JPanel rightSide = new JPanel();
-        JPanel orderPanel=new JPanel();
+        JPanel orderListPanel=new JPanel();
         JPanel modesPanel = new JPanel();
         currentOrderLabel = new JLabel();
         skipOrderBtn = new JButton("Get First Order");
@@ -215,22 +224,29 @@ public class Gui {
         leftSide.setBorder(BorderFactory.createTitledBorder("ORDERS"));
         modesPanel.setLayout(new GridLayout(2, 1));
         modesPanel.setPreferredSize(new Dimension(100, 50));
-        orderPanel.setLayout(new GridLayout(3,1));
+        orderListPanel.setLayout(new GridLayout(3,1));
 
 
         modesPanel.add(moveBox);
         modesPanel.add(scrapBox);
-        orderPanel.add(order1);
-        orderPanel.add(order2);
-        orderPanel.add(order3);
+
+        messageLabel=new JLabel("Welcome to Storage Simulator 1998");
+        messagePanel=new JPanel();
+        messagePanel.setBorder(BorderFactory.createTitledBorder("MESSAGES"));
+        messagePanel.add(messageLabel);
+
+
         rightSide.add(modesPanel, BorderLayout.LINE_END);
         rightSide.add(skipOrderBtn, BorderLayout.CENTER);
-        leftSide.add(currentOrderLabel);
-//        leftSide.add(orderPanel);
+        leftSide.add(orderListPanel);
         leftSide.add(rightSide);
-
+        for (JPanel jp:
+                orderPanels) {
+            orderListPanel.add(jp);
+        }
 
         this.foot.add(leftSide, BorderLayout.CENTER);
+        this.foot.add(messagePanel,BorderLayout.NORTH);
     }
 
     public void displayMoney(ActionListener auxBtnListener, Finances finances) {
@@ -263,7 +279,7 @@ public class Gui {
         for (int i = 0; i < 24; i++) {
             coordsArr = slotToCoords(i);
             if (storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]] != null) {
-                storageSlots[i].setIcon(storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]].getIcon());
+                storageSlots[i].setIcon(storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]].getLargeIcon());
                 storageSlotLabels[i].setText(storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]].getAttributesShort());
             } else {
                 storageSlots[i].setIcon(null);
