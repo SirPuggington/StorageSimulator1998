@@ -58,7 +58,7 @@ public class Actions {
             currentOrder = orders.get(0);
         }
 
-        nextOrderId = 0;
+        nextOrderId = currentOrder.getId();
         if(availableOrders[0]!=null) {
             nextOrderId = Math.max(nextOrderId, availableOrders[1].getId());
         }
