@@ -1,53 +1,79 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Objects;
+
 
 
 public class Gui {
     private final JFrame frame;
 
-    private JPanel head;
-    private JPanel foot;
+    private final JPanel foot;
     private final JButton startBtn;
     private JButton skipOrderBtn;
     private JCheckBox moveBox;
     private JCheckBox scrapBox;
     private JLabel currentOrderLabel;
     private JLabel wallet;
+    private final JButton[] storageSlots = new JButton[24];
+    private final JLabel[] storageSlotLabels = new JLabel[24];
 
-    private int currentOrderId;
-    private int funds;
-    private boolean moveMode = false;
-    private boolean scrapMode = false;
-    private boolean startOfGame;
+    JRadioButton order1 = new JRadioButton();
+    JRadioButton order2 = new JRadioButton();
+    JRadioButton order3 = new JRadioButton();
+    ButtonGroup availableOrders = new ButtonGroup();
 
-    private ArrayList<Order> orders;
-    private Order currentOrder;
-    private Storage storage;
+    public void setWallet(String val) {
+        wallet.setText(val);
+    }
 
-    private JButton[] storageSlots = new JButton[24];
-    private JLabel[] storageSlotLabels = new JLabel[24];
+    public void setMoveBox(boolean b) {
+        moveBox.setSelected(b);
+    }
 
+    public void setScrapBox(boolean b) {
+        scrapBox.setSelected(b);
+    }
+
+    public void setCurrentOrderLabelText(String text) {
+        currentOrderLabel.setText(text);
+    }
+
+    public void setCurrentOrderLabelIcon(Icon icon) {
+        currentOrderLabel.setIcon(icon);
+    }
+
+    public void setSkipBtnText(String text){
+        skipOrderBtn.setText(text);
+    }
+
+    public void reload(){
+        SwingUtilities.updateComponentTreeUI(frame);
+    }
+
+    public void removeStartBtn(){
+        frame.remove(startBtn);
+    }
+    public void setStartBtnAction(ActionListener auxBtnListener){
+        this.startBtn.addActionListener(auxBtnListener);
+    }
+    public JFrame getFrame(){
+        return frame;
+    }
 
     public Gui() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 
         this.frame = new JFrame("StorageSimulator1998");
-        this.head = new JPanel();
+        JPanel head = new JPanel();
         this.foot = new JPanel();
         this.foot.setLayout(new BorderLayout());
         this.startBtn = new JButton("START");
         this.startBtn.setPreferredSize(new Dimension(100, 50));
 
-        this.startBtn.setActionCommand("start");
-        this.startBtn.addActionListener(auxBtnListener);
 
         JLabel logo = new JLabel(new ImageIcon("assets/logo.png"));
-        this.head.add(logo);
+        head.add(logo);
 
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.frame.setSize(800, 600);
@@ -59,27 +85,28 @@ public class Gui {
         frame.add(startBtn);
         this.frame.setLocationRelativeTo(null);
         this.frame.setVisible(true);
+        this.startBtn.setActionCommand("start");
+
+//        availableOrders.add(order1);
+//        availableOrders.add(order2);
+//        availableOrders.add(order3);
+//
+//        order1.setIcon(new ImageIcon("assets/paper/white.png"));
+//        order1.setText("EIN AUFTRAG");
+//        order2.setText("EIN AUFTRAG");
+//        order3.setText("EIN AUFTRAG");
+//
+//        order1.setVisible(false);
+//        order2.setVisible(false);
+//        order3.setVisible(false);
+
 
     }
 
-    private void start() throws FileNotFoundException {
-
-        frame.remove(startBtn);
-        funds = 0;
-        currentOrderId = 0;
-        startOfGame = true;
-        displayStorage();
-        displayOrders();
-        displayMoney();
-        storage = new Storage();
-        CsvImport imp = new CsvImport();
-        orders = imp.importOrders();
-        SwingUtilities.updateComponentTreeUI(frame);
-
-    }
 
 
-    private void displayStorage() {
+
+    public void displayStorage(ActionListener mainBtnListener) {
         JPanel storagePanel = new JPanel();
         storagePanel.setBorder(BorderFactory.createTitledBorder("STORAGE"));
 
@@ -145,7 +172,7 @@ public class Gui {
                         }
 
                     this.storageSlots[i] = slotBtn;
-                    this.storageSlotLabels[i]=slotLabel;
+                    this.storageSlotLabels[i] = slotLabel;
                     i++;
                 }
             }
@@ -163,14 +190,15 @@ public class Gui {
         this.frame.add(storagePanel, BorderLayout.CENTER);
     }
 
-    private void displayOrders() {
-        JPanel orderPanel = new JPanel();
-        JPanel modesPanel = new JPanel();
+    public void displayOrders(ActionListener auxBtnListener, ActionListener checkboxListener) {
+        JPanel leftSide = new JPanel();
         JPanel rightSide = new JPanel();
+        JPanel orderPanel=new JPanel();
+        JPanel modesPanel = new JPanel();
         currentOrderLabel = new JLabel();
         skipOrderBtn = new JButton("Get First Order");
-        moveBox = new JCheckBox("Move");
-        scrapBox = new JCheckBox("Scrap");
+        moveBox = new JCheckBox("Move (-100$)");
+        scrapBox = new JCheckBox("Scrap (-300$)");
 
         currentOrderLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -183,31 +211,36 @@ public class Gui {
         moveBox.addActionListener(checkboxListener);
         scrapBox.addActionListener(checkboxListener);
 
-        orderPanel.setLayout(new GridLayout(1, 2));
-        orderPanel.setBorder(BorderFactory.createTitledBorder("ORDERS"));
+        leftSide.setLayout(new GridLayout(1, 2));
+        leftSide.setBorder(BorderFactory.createTitledBorder("ORDERS"));
         modesPanel.setLayout(new GridLayout(2, 1));
         modesPanel.setPreferredSize(new Dimension(100, 50));
+        orderPanel.setLayout(new GridLayout(3,1));
 
 
         modesPanel.add(moveBox);
         modesPanel.add(scrapBox);
+        orderPanel.add(order1);
+        orderPanel.add(order2);
+        orderPanel.add(order3);
         rightSide.add(modesPanel, BorderLayout.LINE_END);
         rightSide.add(skipOrderBtn, BorderLayout.CENTER);
-        orderPanel.add(currentOrderLabel);
-        orderPanel.add(rightSide);
+        leftSide.add(currentOrderLabel);
+//        leftSide.add(orderPanel);
+        leftSide.add(rightSide);
 
 
-        this.foot.add(orderPanel, BorderLayout.CENTER);
+        this.foot.add(leftSide, BorderLayout.CENTER);
     }
 
-    private void displayMoney() {
+    public void displayMoney(ActionListener auxBtnListener, Finances finances) {
         JPanel financePanel = new JPanel();
         financePanel.setBorder(BorderFactory.createTitledBorder("FINANCES"));
 
         JPanel moneyPanel = new JPanel();
         JButton balanceBtn = new JButton("Show Balance");
         JLabel icon = new JLabel(new ImageIcon("assets/dollar.png"));
-        wallet = new JLabel(String.valueOf(funds));
+        wallet = new JLabel(String.valueOf(finances.getFunds()));
         financePanel.setLayout(new GridLayout(1, 2));
         moneyPanel.setLayout(new BorderLayout(10, 0));
         moneyPanel.add(icon, BorderLayout.LINE_START);
@@ -223,36 +256,16 @@ public class Gui {
 
     }
 
-    private void updateOrders() {
 
-        try {
-            currentOrder = orders.get(currentOrderId);
-        } catch (RuntimeException E) {
-            //GET FIRST ORDER AGAIN, WHEN THERE ARE NO NEW ONES LEFT
-            currentOrder = orders.get(0);
-        }
 
-        if (currentOrder.in) {
-            currentOrderLabel.setText("INCOMING - " + currentOrder.product.getAttributes() + " - Reward: " + currentOrder.reward);
-        } else {
-            currentOrderLabel.setText("OUTGOING - " + currentOrder.product.getAttributes() + " - Reward: " + currentOrder.reward);
-
-        }
-        currentOrderLabel.setIcon(currentOrder.product.getIcon());
-        currentOrderId = currentOrder.id;
-        skipOrderBtn.setText("Skip current Order (-" + currentOrder.reward + "$)");
-
-        SwingUtilities.updateComponentTreeUI(frame);
-    }
-
-    private void updateStorage(){
+    public void updateStorage(Storage storage) {
         int[] coordsArr;
         for (int i = 0; i < 24; i++) {
             coordsArr = slotToCoords(i);
-            if(storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]]!=null) {
+            if (storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]] != null) {
                 storageSlots[i].setIcon(storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]].getIcon());
                 storageSlotLabels[i].setText(storage.shelf[coordsArr[0]][coordsArr[1]][coordsArr[2]].getAttributesShort());
-            }else {
+            } else {
                 storageSlots[i].setIcon(null);
                 storageSlotLabels[i].setText("Empty");
             }
@@ -261,17 +274,17 @@ public class Gui {
     }
 
 
-    public String coordsToSlot(String coords) {
-        int x = Integer.parseInt(coords.split(":")[0]);
-        int y = Integer.parseInt(coords.split(":")[1]);
-        int z = Integer.parseInt(coords.split(":")[2]);
-        String slot;
-
-        slot = String.valueOf(x + (y * 4) + 12 * z);
-
-
-        return slot;
-    }
+//    public String coordsToSlot(String coords) {
+//        int x = Integer.parseInt(coords.split(":")[0]);
+//        int y = Integer.parseInt(coords.split(":")[1]);
+//        int z = Integer.parseInt(coords.split(":")[2]);
+//        String slot;
+//
+//        slot = String.valueOf(x + (y * 4) + 12 * z);
+//
+//
+//        return slot;
+//    }
 
     public int[] slotToCoords(int i) {
         int[] coords = {0, 0, 0};
@@ -297,163 +310,148 @@ public class Gui {
         panel.setBorder(BorderFactory.createEtchedBorder());
     }
 
-    private ActionListener checkboxListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String mode = e.getActionCommand();
+//    private ActionListener checkboxListener = new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            String mode = e.getActionCommand();
+//
+//            if (Objects.equals(mode, "scrap")) {
+//
+//                scrapMode = !scrapMode;
+//                moveMode = false;
+//                moveBox.setSelected(false);
+//
+//
+//            } else {
+//
+//                moveMode = !moveMode;
+//                scrapMode = false;
+//                scrapBox.setSelected(false);
+//
+//            }
+//
+//        }
+//    };
 
-            if (Objects.equals(mode, "scrap")) {
-
-                scrapMode = !scrapMode;
-                moveMode = false;
-                moveBox.setSelected(false);
-
-                System.out.println("scrapping " + scrapMode);
-
-            } else {
-
-                moveMode = !moveMode;
-                scrapMode = false;
-                scrapBox.setSelected(false);
-
-                System.out.println("moving " + moveMode);
-
-            }
-
-        }
-    };
-
-    private ActionListener auxBtnListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            String command = e.getActionCommand();
-
-            switch (command) {
-                case "skip":
-                    if (startOfGame) {
-                        startOfGame = false;
-                    } else {
-                        funds = funds - currentOrder.reward;
-                    }
-                    updateOrders();
-
-                    break;
-                case "start":
-                    try {
-                        start();
-                    } catch (FileNotFoundException ex) {
-                        ex.printStackTrace();
-                    }
-                    break;
-
-                case "balance":
-                    JFrame balanceWindow=new JFrame("Balance");
-                    balanceWindow.setSize(new Dimension(400, 400));
-                    balanceWindow.setLayout(new BorderLayout());
-
-                    JScrollPane balanceScoll = new JScrollPane();
-                    JPanel balanceTotal = new JPanel();
-
-                    String[] testNames = new String[2];
-                    String[][] testVals = new String[1000][2];
-
-                    testNames[0]="Action";
-                    testNames[1]="Value";
-
-                    testVals[0][0]="Test";
-                    testVals[1][0]="Test";
-                    testVals[2][0]="Test";
-                    testVals[3][0]="Test";
-                    testVals[0][1]="100";
-                    testVals[1][1]="750";
-                    testVals[2][1]="-30";
-                    testVals[3][1]="Test";
-
-
-                    ArrayList<String[]> Test = new ArrayList<>();
-
-                    Test.add(testNames);
-                    Test.add(testNames);
-                    Test.add(testNames);
-                    Test.add(testNames);
-                    Test.add(testNames);
-
-                    String[][] a= new String[Test.size()][];
-                    a=Test.toArray(a);
-
-
-                    System.out.println(testVals);
-                    System.out.println(testNames);
-
-                    JTable balanceRecordsTable =new JTable(a,testNames);
-
-                    balanceTotal.setLayout(new GridLayout(1,2));
-
-
-                    JLabel totalText = new JLabel("Total Funds");
-                    JLabel totalMoney = new JLabel(Integer.toString(funds));
-
-                    totalText.setHorizontalAlignment(JLabel.CENTER);
-                    totalMoney.setHorizontalAlignment(JLabel.CENTER);
-
-                    balanceScoll.getViewport().add(balanceRecordsTable);
-
-                    balanceWindow.add(balanceScoll, BorderLayout.CENTER);
-                    balanceWindow.add(balanceTotal, BorderLayout.PAGE_END);
-
-                    balanceTotal.add(totalText);
-                    balanceTotal.add(totalMoney);
-
-
-                    balanceWindow.setLocationRelativeTo(frame);
-                    balanceWindow.setVisible(true);
-
-            }
-
-            wallet.setText(String.valueOf(funds));
-
-        }
-    };
-
-    private ActionListener mainBtnListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            String c = e.getActionCommand();
-            String[] cs = c.split(":");
-            int x = Integer.parseInt(cs[0]);
-            int y = Integer.parseInt(cs[1]);
-            int z = Integer.parseInt(cs[2]);
-
-            if (moveMode) {
-
-            }
-            if (scrapMode) {
-                if(storage.scrap(x,y,z)){
-                    updateStorage();
-                    funds=funds-500;
-                }
-            }else{
-                if (storage.action(currentOrder, x, y, z)) {
-                    updateStorage();
-                    funds=funds+currentOrder.reward;
-                    updateOrders();
-
-
-                }
-            }
-
-
-
-
-
-
-            wallet.setText(String.valueOf(funds));
-
-
-        }
-    };
+//    private ActionListener auxBtnListener = new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//
+//            String command = e.getActionCommand();
+//
+//            switch (command) {
+//                case "skip":
+//                    if (startOfGame) {
+//                        startOfGame = false;
+//                    } else {
+//                        logString = "SKIPPED: " + currentOrder.getProductAttributes();
+//                        finances.updateFunds(currentOrder.getReward() * (-1), logString);
+//                    }
+//                    updateOrders();
+//
+//                    break;
+//                case "start":
+//                    try {
+//                        start();
+//                    } catch (FileNotFoundException ex) {
+//                        ex.printStackTrace();
+//                    }
+//                    break;
+//
+//                case "balance":
+//
+//                    finances.openBalance(frame);
+//
+//                case "timer":
+//
+//                    if(startOfGame){
+//                        currentOrderLabel.setText("");
+//                        currentOrderLabel.setIcon(null);
+//                    }else {
+//                        currentOrderLabel.setText(currentOrder.getProductAttributes());
+//                        currentOrderLabel.setIcon(currentOrder.getProductIcon());
+//                    }
+//                    timer.stop();
+//
+//            }
+//
+//            wallet.setText(String.valueOf(finances.getFunds()));
+//
+//        }
+//    };
+//
+//    private ActionListener mainBtnListener = new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//
+//            if (!startOfGame) {
+//
+//                String c = e.getActionCommand();
+//                String[] cs = c.split(":");
+//                int x = Integer.parseInt(cs[0]);
+//                int y = Integer.parseInt(cs[1]);
+//                int z = Integer.parseInt(cs[2]);
+//
+//                if (moveMode) {
+//                    if (moveFrom != null) {
+//                        logString = storage.move(x, y, z, moveFrom[0], moveFrom[1], moveFrom[2]);
+//                        if (logString.startsWith("MOVED:")) {
+//                            finances.updateFunds(-100, logString);
+//                        }
+//                        System.out.println(logString);
+//                        moveFrom = null;
+//                        updateStorage();
+//                    } else {
+//                        if (storage.shelf[x][y][z] != null) {
+//                            moveFrom = new int[3];
+//                            moveFrom[0] = x;
+//                            moveFrom[1] = y;
+//                            moveFrom[2] = z;
+//                            logString = "MOVING: " + storage.shelf[x][y][z].getAttributes();
+//                        } else {
+//                            logString = "NOTHING TO MOVE";
+//                        }
+//                    }
+//                } else if (scrapMode) {
+//                    logString = storage.scrap(x, y, z);
+//                    if (logString != "NOTHING TO SCRAP") {
+//                        updateStorage();
+//                        finances.updateFunds(-500, logString);
+//                    }
+//                } else
+//                    //STANDARD MODE
+//                    if (storage.action(currentOrder, x, y, z)) {
+//                        updateStorage();
+//                        if (currentOrder.isIn()) {
+//                            logString = "STORED: " + currentOrder.getProductAttributes();
+//                        } else {
+//                            logString = "CLEARED: " + currentOrder.getProductAttributes();
+//                        }
+//                        finances.updateFunds(currentOrder.getReward(), logString);
+//                        updateOrders();
+//
+//
+//                    }
+//            }else {
+//                logString="REQUEST YOUR FIRST ORDER ->";
+//            }
+//
+//
+//
+//            wallet.setText(String.valueOf(finances.getFunds()));
+//
+//
+//            currentOrderLabel.setText(logString);
+//            currentOrderLabel.setIcon(null);
+//
+//            if(!timer.isRunning()&&!logString.startsWith("MOVING")) {
+//
+//                timer.setActionCommand("timer");
+//                timer.start();
+//
+//            }
+//        }
+//    };
 
 
 }

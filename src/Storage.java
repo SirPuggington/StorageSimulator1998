@@ -3,12 +3,13 @@ import java.util.Objects;
 public class Storage {
 
     final Product[][][] shelf = new Product[4][3][2];
+    String logString;
 
 
 
     public boolean action(Order order, int x, int y, int z) {
         boolean success;
-        if (order.in) {
+        if (order.isIn()) {
             success = this.in(order, x, y, z);
         } else {
             success = this.out(order, x, y, z);
@@ -20,7 +21,7 @@ public class Storage {
 
     private boolean in(Order order, int x, int y, int z) {
 
-        System.out.println(order.product.getAttributes());
+        System.out.println(order.getProductAttributes());
         if(this.shelf[x][y][z]!=null) {
             System.out.println(this.shelf[x][y][z].getAttributes());
         }else {
@@ -30,51 +31,51 @@ public class Storage {
             //SLOT IS NOT EMPTY
             return false;
         }
-        if (z == 1 && this.shelf[x][y][0] != null) {
+        if (z == 1 && this.shelf[x][y][0] != null && this.shelf[x][y][0]!=order.getProduct()) {
             //SLOT IS BLOCKED BY
             return false;
         }
 
         // SPECIAL CASES FOR TYPE: WOOD
-        if (order.product instanceof Wood) {
-            if (Objects.equals(((Wood) order.product).shape, "beam")) {
+        if (order.getProduct() instanceof Wood) {
+            if (Objects.equals(((Wood) order.getProduct()).shape, "beam")) {
                 if (this.shelf[x][y][0] != null || this.shelf[x][y][1] != null) {
                     //BEAMS NEED 2 EMPTY SLOTS
                     return false;
                 }
-                this.shelf[x][y][0] = order.product;
-                this.shelf[x][y][1] = order.product;
+                this.shelf[x][y][0] = order.getProduct();
+                this.shelf[x][y][1] = order.getProduct();
                 return true;
             }
         }
 
         // SPECIAL CASES FOR TYPE: STONE
-        if (order.product instanceof Stone) {
-            if (((Stone) order.product).weight > 1 && y == 2) {
+        if (order.getProduct() instanceof Stone) {
+            if (((Stone) order.getProduct()).weight > 1 && y == 2) {
                 //STONES OF MEDIUM WEIGHT CAN NOT BE PLACED IN THE TOP ROW
                 return false;
             }
-            if (((Stone) order.product).weight > 2 && y != 0) {
+            if (((Stone) order.getProduct()).weight > 2 && y != 0) {
                 //STONES OF HEAVY WEIGHT MUST BE PLACED IN THE BOTTOM ROW
                 return false;
 
             }
         }
 
-        this.shelf[x][y][z] = order.product;
+        this.shelf[x][y][z] = order.getProduct();
         return true;
     }
 
     private boolean out(Order order, int x, int y, int z) {
 
-        System.out.println(order.product.getAttributes());
+        System.out.println(order.getProduct().getAttributes());
         System.out.println(this.shelf[x][y][z].getAttributes());
 
         if (this.shelf[x][y][z] != null) {
-            if (Objects.equals(order.product.getAttributes(), this.shelf[x][y][z].getAttributes())) {
+            if (Objects.equals(order.getProduct().getAttributes(), this.shelf[x][y][z].getAttributes())) {
 
-                if (order.product instanceof Wood) {
-                    if (Objects.equals(((Wood) order.product).shape, "beam")) {
+                if (order.getProduct() instanceof Wood) {
+                    if (Objects.equals(((Wood) order.getProduct()).shape, "beam")) {
                         this.shelf[x][y][0] = null;
                         this.shelf[x][y][1] = null;
 
@@ -100,22 +101,22 @@ public class Storage {
         return true;
     }
 
-    public boolean move(int targetX, int targetY, int targetZ,
+    public String move(int targetX, int targetY, int targetZ,
                         int originX, int originY, int originZ) {
-        boolean success;
+        String logString;
 
         Order moveOrder = new Order(0, true, this.shelf[originX][originY][originZ], -100);
 
         if (action(moveOrder, targetX, targetY, targetZ)) {
             this.shelf[originX][originY][originZ] = null;
-            if (moveOrder.product instanceof Wood) {
-                if (Objects.equals(((Wood) moveOrder.product).shape, "beam")) {
+            if (moveOrder.getProduct() instanceof Wood) {
+                if (Objects.equals(((Wood) moveOrder.getProduct()).shape, "beam")) {
                     this.shelf[originX][originY][1] = null;
                 }
             }
-            success = true;
+            logString="MOVED: "+moveOrder.getProductAttributes();
         } else {
-            success = false;
+            logString="CAN NOT BE MOVED THERE";
         }
 
 
@@ -129,13 +130,14 @@ public class Storage {
 //            success=false;
 //        }
 
-        return success;
+        return logString;
     }
 
-    public boolean scrap(int x, int y, int z){
-        boolean success;
+    public String scrap(int x, int y, int z){
+        String logString;
 
         if(this.shelf[x][y][z]!=null) {
+            logString="SCRAPPED: "+ this.shelf[x][y][z].getAttributes();
             if (this.shelf[x][y][z] instanceof Wood){
                 if (Objects.equals(((Wood) this.shelf[x][y][z]).shape, "beam")){
                     this.shelf[x][y][1] = null;
@@ -145,12 +147,12 @@ public class Storage {
             else{
                 this.shelf[x][y][z] = null;
             }
-            success=true;
+
         }else{
             //NOTHING TO SCRAP
-            success=false;
+            logString="NOTHING TO SCRAP";
         }
-        return success;
+        return logString;
     }
 
 

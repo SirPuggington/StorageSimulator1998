@@ -10,15 +10,9 @@ public class Paper extends Product{
     public Paper(String color, String size){
 
         switch (color.toLowerCase()) {
-            case "blau" -> {
-                this.color = "blue";
-            }
-            case "gruen" -> {
-                this.color = "green";
-            }
-            case "weiss" -> {
-                this.color = "white";
-            }
+            case "blau" -> this.color = "blue";
+            case "gruen" -> this.color = "green";
+            case "weiss" -> this.color = "white";
         }
         this.size=size;
         this.icon = new ImageIcon("assets/paper/"+this.color+".png");
