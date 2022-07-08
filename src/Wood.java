@@ -6,6 +6,7 @@ public class Wood extends Product {
     String shape;
     String type;
     ImageIcon icon;
+    ImageIcon selIcon;
     String iconShape;
     String material = "Wood";
 
@@ -34,6 +35,7 @@ public class Wood extends Product {
         }
 
         this.icon = new ImageIcon("assets/wood/" + this.iconShape + "/" + this.type + ".png");
+        this.selIcon = new ImageIcon("assets/wood/" + this.iconShape + "/" + this.type + "_selected.png");
 
 
     }
@@ -48,6 +50,9 @@ public class Wood extends Product {
 
     public ImageIcon getIcon() {
         return icon;
+    }
+    public ImageIcon getSelectedIcon() {
+        return selIcon;
     }
     public ImageIcon getLargeIcon(){
         return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));

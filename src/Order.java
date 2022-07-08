@@ -40,12 +40,15 @@ public class Order {
     public Icon getProductIcon(){
         return product.getIcon();
     }
+    public Icon getSelectedProductIcon(){
+        return product.getSelectedIcon();
+    }
     public String getOrderInfo(){
         String orderInfo;
         if (in) {
-            orderInfo="INCOMING - " + getProductAttributes() + " - Reward: " + reward;
+            orderInfo="INCOMING - " + getProductAttributes() + " - Reward: " + reward+"$";
         } else {
-            orderInfo="OUTGOING - " + getProductAttributes() + " - Reward: " + reward;
+            orderInfo="OUTGOING - " + getProductAttributes() + " - Reward: " + reward+"$";
 
         }
         return orderInfo;

@@ -8,6 +8,7 @@ public class Stone extends Product{
     int weight;
     String weightString;
     ImageIcon icon;
+    ImageIcon selIcon;
 
 
     public Stone(String type, String weight) {
@@ -34,6 +35,7 @@ public class Stone extends Product{
             }
         }
         this.icon=new ImageIcon("assets/stone/"+this.type+".png");
+        this.selIcon=new ImageIcon("assets/stone/"+this.type+"_selected.png");
 
 
     }
@@ -48,6 +50,9 @@ public class Stone extends Product{
 
     public ImageIcon getIcon() {
         return icon;
+    }
+    public ImageIcon getSelectedIcon() {
+        return selIcon;
     }
     public ImageIcon getLargeIcon(){
         return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));

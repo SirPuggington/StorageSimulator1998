@@ -7,6 +7,7 @@ public class Paper extends Product{
     String size;
     String material="Paper";
     ImageIcon icon;
+    ImageIcon selIcon;
 
     public Paper(String color, String size){
 
@@ -17,6 +18,7 @@ public class Paper extends Product{
         }
         this.size=size;
         this.icon = new ImageIcon("assets/paper/"+this.color+".png");
+        this.selIcon = new ImageIcon("assets/paper/"+this.color+"_selected.png");
 
     }
 
@@ -30,6 +32,10 @@ public class Paper extends Product{
 
     public ImageIcon getIcon() {
         return icon;
+    }
+
+    public Icon getSelectedIcon() {
+        return selIcon;
     }
 
     public ImageIcon getLargeIcon(){

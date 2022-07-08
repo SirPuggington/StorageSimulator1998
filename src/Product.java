@@ -25,4 +25,8 @@ public class Product {
     public ImageIcon getLargeIcon(){
         return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));
     }
+
+    public Icon getSelectedIcon() {
+        return icon;
+    }
 }

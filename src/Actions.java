@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Actions {
 
@@ -12,69 +11,70 @@ public class Actions {
     private final Storage storage;
     private final CsvImport imp;
 
-    private boolean startOfGame;
     private boolean moveMode;
     private boolean scrapMode;
     private String logString;
     private int[] moveFrom;
     private int nextOrderId;
+    private ImageIcon errorIcon;
+    private ImageIcon successIcon;
 
 
     private ArrayList<Order> orders;
     private Order[] availableOrders;
     private Order currentOrder;
+    private Order nextOrder;
     private Timer timer;
 
-    public Actions(Gui gui, Finances fin, Storage sto, CsvImport imp){
-        this.gui=gui;
+    public Actions(Gui gui, Finances fin, Storage sto, CsvImport imp) {
+        this.gui = gui;
         this.finances = fin;
-        this.storage=sto;
-        this.imp=imp;
-        gui.setStartBtnAction(auxBtnListener);
+        this.storage = sto;
+        this.imp = imp;
+        gui.setAuxBtnAction(auxBtnListener);
     }
 
     public void startGame() throws FileNotFoundException {
-        timer = new Timer(1500, auxBtnListener);
-        availableOrders=new Order[3];
-
+        timer = new Timer(2500, auxBtnListener);
+        successIcon = new ImageIcon("assets/success.png");
+        errorIcon = new ImageIcon("assets/error.png");
+        availableOrders = new Order[3];
 
         gui.removeStartBtn();
         nextOrderId = 0;
-        startOfGame = true;
         gui.displayStorage(mainBtnListener);
-        gui.displayOrders(auxBtnListener,checkboxListener);
-        gui.displayMoney(auxBtnListener,finances);
+        gui.displayOrders();
+        gui.displayMoney(finances);
+        gui.setCheckboxAction(checkboxListener);
 
         orders = imp.importOrders();
         gui.reload();
     }
 
-    public void updateOrders() {
+    public void getNextOrder() {
 
         try {
-            currentOrder = orders.get(nextOrderId);
+            nextOrder = orders.get(nextOrderId);
         } catch (RuntimeException E) {
             //getting first order again, if there are no new ones left
-            currentOrder = orders.get(0);
+            nextOrder = orders.get(0);
         }
+    }
+
+    public void updateOrders() {
 
         nextOrderId = currentOrder.getId();
-        if(availableOrders[0]!=null) {
+        if (availableOrders[0] != null) {
+            nextOrderId = Math.max(nextOrderId, availableOrders[0].getId());
+        }
+        if (availableOrders[1] != null) {
             nextOrderId = Math.max(nextOrderId, availableOrders[1].getId());
         }
-        if(availableOrders[1]!=null) {
-            nextOrderId = Math.max(nextOrderId, availableOrders[1].getId());
+        if (availableOrders[2] != null) {
+            nextOrderId = Math.max(nextOrderId, availableOrders[2].getId());
         }
-        if(availableOrders[2]!=null){
-            nextOrderId=Math.max(nextOrderId,availableOrders[2].getId());
-        }
+        gui.setSkipBtnText("Skip selected Order (-" + currentOrder.getReward() + "$)");
 
-        gui.setCurrentOrderLabelText(currentOrder.getOrderInfo());
-
-        gui.setCurrentOrderLabelIcon(currentOrder.getProductIcon());
-
-
-        gui.setSkipBtnText("Skip current Order (-" + currentOrder.getReward() + "$)");
 
         gui.reload();
     }
@@ -82,23 +82,25 @@ public class Actions {
     private final ActionListener checkboxListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String mode = e.getActionCommand();
+            String command = e.getActionCommand();
 
-            if (Objects.equals(mode, "scrap")) {
-
-                scrapMode = !scrapMode;
-                moveMode = false;
-                gui.setMoveBox(false);
-
-
-            } else {
-
-                moveMode = !moveMode;
-                scrapMode = false;
-                gui.setScrapBox(false);
-
+            switch (command) {
+                case "scrap" -> {
+                    scrapMode = !scrapMode;
+                    moveMode = false;
+                    gui.setMoveBox(false);
+                }
+                case "move" -> {
+                    moveMode = !moveMode;
+                    scrapMode = false;
+                    gui.setScrapBox(false);
+                }
+                case "radio" -> {
+                    setCurrentOrder();
+                    System.out.println(currentOrder);
+                    updateOrders();
+                }
             }
-
         }
     };
 
@@ -110,15 +112,23 @@ public class Actions {
 
             switch (command) {
                 case "skip":
-                    if (startOfGame) {
-                        startOfGame = false;
-                    } else {
+                    if (currentOrder!=null) {
+
+                        gui.hideOrder();
+
+
                         logString = "SKIPPED: " + currentOrder.getProductAttributes();
                         finances.updateFunds(currentOrder.getReward() * (-1), logString);
+                        updateOrders();
+                        currentOrder=null;
+                        gui.setSkipBtnText("");
+
+                    } else {
+                        logString="E: SELECT AN ORDER TO SKIP";
                     }
-                    updateOrders();
 
                     break;
+
                 case "start":
                     try {
                         startGame();
@@ -133,14 +143,26 @@ public class Actions {
 
                 case "timer":
 
-                    if(startOfGame){
-                        gui.setCurrentOrderLabelText("");
-                        gui.setCurrentOrderLabelIcon(null);
-                    }else {
-                        gui.setCurrentOrderLabelText(currentOrder.getOrderInfo());
-                        gui.setCurrentOrderLabelIcon(currentOrder.getProductIcon());
-                    }
+
+                    gui.setMessageLabelText("no messages");
+                    gui.setMessageLabelIcon(null);
+
                     timer.stop();
+                default:
+                    //NEW ORDER BUTTONS
+                    if (command.startsWith("new")) {
+                        getNextOrder();
+
+                        int index = Integer.parseInt(command.split(" ")[1]);
+
+                        gui.newOrder(index,nextOrder);
+                        availableOrders[index] = nextOrder;
+                        setCurrentOrder();
+
+                        updateOrders();
+                        System.out.println(nextOrder.getOrderInfo());
+                        gui.reload();
+                    }
 
             }
 
@@ -149,71 +171,91 @@ public class Actions {
         }
     };
 
+    private void setCurrentOrder() {
+        int orderIndex = gui.getSelectedRadio();
+        System.out.println(orderIndex);
+        currentOrder = availableOrders[orderIndex];
+    }
+
     private final ActionListener mainBtnListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            if (!startOfGame) {
 
-                String c = e.getActionCommand();
-                String[] cs = c.split(":");
-                int x = Integer.parseInt(cs[0]);
-                int y = Integer.parseInt(cs[1]);
-                int z = Integer.parseInt(cs[2]);
+            String c = e.getActionCommand();
+            String[] cs = c.split(":");
+            int x = Integer.parseInt(cs[0]);
+            int y = Integer.parseInt(cs[1]);
+            int z = Integer.parseInt(cs[2]);
 
-                if (moveMode) {
-                    if (moveFrom != null) {
-                        logString = storage.move(x, y, z, moveFrom[0], moveFrom[1], moveFrom[2]);
-                        if (logString.startsWith("MOVED:")) {
-                            finances.updateFunds(-100, logString);
-                        }
-                        System.out.println(logString);
-                        moveFrom = null;
-                        gui.updateStorage(storage);
+            if (moveMode) {
+                if (moveFrom != null) {
+
+                    if (storage.move(x, y, z, moveFrom[0], moveFrom[1], moveFrom[2])){
+                        logString = storage.getLogString();
+                        finances.updateFunds(-100, logString.substring(3));
+                    }
+                    logString = storage.getLogString();
+
+                    moveFrom = null;
+                    gui.updateStorage(storage);
+                } else {
+                    if (storage.shelf[x][y][z] != null) {
+                        moveFrom = new int[3];
+                        moveFrom[0] = x;
+                        moveFrom[1] = y;
+                        moveFrom[2] = z;
+                        logString = "MOVING: " + storage.shelf[x][y][z].getAttributes();
                     } else {
-                        if (storage.shelf[x][y][z] != null) {
-                            moveFrom = new int[3];
-                            moveFrom[0] = x;
-                            moveFrom[1] = y;
-                            moveFrom[2] = z;
-                            logString = "MOVING: " + storage.shelf[x][y][z].getAttributes();
-                        } else {
-                            logString = "NOTHING TO MOVE";
-                        }
+                        logString = "E: NOTHING TO MOVE";
                     }
-                } else if (scrapMode) {
-                    logString = storage.scrap(x, y, z);
-                    if (!Objects.equals(logString, "NOTHING TO SCRAP")) {
-                        gui.updateStorage(storage);
-                        finances.updateFunds(-500, logString);
-                    }
-                } else
-                    //STANDARD MODE
+                }
+            } else if (scrapMode) {
+
+                if (storage.scrap(x, y, z)) {
+                    logString = storage.getLogString();
+                    gui.updateStorage(storage);
+                    finances.updateFunds(-300, logString.substring(3));
+                }logString = storage.getLogString();
+            } else
+                //STANDARD MODE
+                if (currentOrder != null) {
                     if (storage.action(currentOrder, x, y, z)) {
+                        logString=storage.getLogString();
                         gui.updateStorage(storage);
                         if (currentOrder.isIn()) {
-                            logString = "STORED: " + currentOrder.getProductAttributes();
+                            logString = "S: STORED: " + currentOrder.getProductAttributes();
                         } else {
-                            logString = "CLEARED: " + currentOrder.getProductAttributes();
+                            logString = "S: CLEARED: " + currentOrder.getProductAttributes();
                         }
                         finances.updateFunds(currentOrder.getReward(), logString);
+                        gui.hideOrder();
                         updateOrders();
-
-
+                        gui.setSkipBtnText("");
+                        currentOrder = null;
                     }
-            }else {
-                logString="REQUEST YOUR FIRST ORDER ->";
-            }
 
+                } else {
+                    logString = "E: SELECT AN ORDER OR REQUEST A NEW ONE";
+
+                }
 
 
             gui.setWallet(String.valueOf(finances.getFunds()));
 
+            if (logString.startsWith("E:")) {
+                gui.setMessageLabelText(logString.substring(3));
+                gui.setMessageLabelIcon(errorIcon);
+            } else if (logString.startsWith("S:")) {
+                gui.setMessageLabelText(logString.substring(3));
+                gui.setMessageLabelIcon(successIcon);
+            } else {
+                gui.setMessageLabelText(logString);
+                gui.setMessageLabelIcon(null);
+            }
 
-            gui.setCurrentOrderLabelText(logString);
-            gui.setCurrentOrderLabelIcon(null);
-
-            if(!timer.isRunning()&&!logString.startsWith("MOVING")) {
+            timer.stop();
+            if (!logString.startsWith("MOVING")) {
 
                 timer.setActionCommand("timer");
                 timer.start();

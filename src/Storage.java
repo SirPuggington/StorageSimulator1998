@@ -6,7 +6,6 @@ public class Storage {
     String logString;
 
 
-
     public boolean action(Order order, int x, int y, int z) {
         boolean success;
         if (order.isIn()) {
@@ -22,16 +21,16 @@ public class Storage {
     private boolean in(Order order, int x, int y, int z) {
 
         System.out.println(order.getProductAttributes());
-        if(this.shelf[x][y][z]!=null) {
+        if (this.shelf[x][y][z] != null) {
             System.out.println(this.shelf[x][y][z].getAttributes());
-        }else {
+        } else {
             System.out.println("empty");
         }
         if (this.shelf[x][y][z] != null) {
             //SLOT IS NOT EMPTY
             return false;
         }
-        if (z == 1 && this.shelf[x][y][0] != null && this.shelf[x][y][0]!=order.getProduct()) {
+        if (z == 1 && this.shelf[x][y][0] != null && this.shelf[x][y][0] != order.getProduct()) {
             //SLOT IS BLOCKED BY
             return false;
         }
@@ -79,11 +78,11 @@ public class Storage {
                         this.shelf[x][y][0] = null;
                         this.shelf[x][y][1] = null;
 
-                    }}
+                    }
+                }
 
                 if (z == 1 && this.shelf[x][y][0] != null) {
-                    //ITEM IS BLOCKED BY ANOTHER PALLET
-                    System.out.println("ITEM IS BLOCKED BY ANOTHER PALLET");
+                    logString = "E: ITEM IS BLOCKED BY ANOTHER PALLET";
                     return false;
                 }
 
@@ -91,19 +90,18 @@ public class Storage {
 
             } else {
                 //WRONG PRODUCT SELECTED
-                System.out.println("WRONG PRODUCT SELECTED");
+                logString = "E: WRONG PRODUCT SELECTED";
                 return false;
             }
         } else {
-            System.out.println("SHELF IS EMPTY");
+            logString = "E: SHELF IS EMPTY";
         }
-
         return true;
     }
 
-    public String move(int targetX, int targetY, int targetZ,
+    public boolean move(int targetX, int targetY, int targetZ,
                         int originX, int originY, int originZ) {
-        String logString;
+
 
         Order moveOrder = new Order(0, true, this.shelf[originX][originY][originZ], -100);
 
@@ -112,14 +110,14 @@ public class Storage {
             if (moveOrder.getProduct() instanceof Wood) {
                 if (Objects.equals(((Wood) moveOrder.getProduct()).shape, "beam")) {
                     this.shelf[originX][originY][1] = null;
+                    this.shelf[originX][originY][0] = null;
                 }
             }
-            logString="MOVED: "+moveOrder.getProductAttributes();
+            logString = "S: MOVED: " + moveOrder.getProductAttributes();
+            return true;
         } else {
-            logString="CAN NOT BE MOVED THERE";
+            return false;
         }
-
-
 //        if (this.shelf[targetX][targetY][targetZ] == null) {
 //
 //            this.shelf[targetX][targetY][targetZ]=this.shelf[originX][originY][originZ];
@@ -129,31 +127,37 @@ public class Storage {
 //            //CANNOT MOVE PALLET TO A SPOT THAT IS ALREADY TAKEN
 //            success=false;
 //        }
-
-        return logString;
     }
 
-    public String scrap(int x, int y, int z){
-        String logString;
-
-        if(this.shelf[x][y][z]!=null) {
-            logString="SCRAPPED: "+ this.shelf[x][y][z].getAttributes();
-            if (this.shelf[x][y][z] instanceof Wood){
-                if (Objects.equals(((Wood) this.shelf[x][y][z]).shape, "beam")){
+    public boolean scrap(int x, int y, int z) {
+        if (this.shelf[x][y][z] != null) {
+            logString = "S: SCRAPPED: " + this.shelf[x][y][z].getAttributes();
+            if (this.shelf[x][y][z] instanceof Wood) {
+                if (Objects.equals(((Wood) this.shelf[x][y][z]).shape, "beam")) {
                     this.shelf[x][y][1] = null;
                     this.shelf[x][y][0] = null;
                 }
             }
-            else{
-                this.shelf[x][y][z] = null;
+            if (z == 1 && this.shelf[x][y][0] != null) {
+                logString = "E: SLOT IS BLOCKED BY ANOTHER PALLET";
+                return false;
             }
 
-        }else{
+
+            this.shelf[x][y][z] = null;
+
+            return true;
+
+
+        } else {
             //NOTHING TO SCRAP
-            logString="NOTHING TO SCRAP";
+            logString = "E: NOTHING TO SCRAP";
+            return false;
         }
-        return logString;
     }
 
 
+    public String getLogString() {
+        return logString;
+    }
 }
