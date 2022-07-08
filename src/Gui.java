@@ -1,16 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Objects;
 
 
 public class Gui {
     private final JFrame frame;
+    private JFrame tutorial;
     private final JPanel foot;
     private final JButton startBtn;
+    private final JButton infoBtn;
     private final JButton skipOrderBtn;
     private final JButton balanceBtn;
+    private final JButton closeBtn;
     private JCheckBox moveBox;
     private JCheckBox scrapBox;
     private JLabel wallet;
@@ -57,6 +62,7 @@ public class Gui {
 
     public void removeStartBtn(){
         frame.remove(startBtn);
+        foot.remove(infoBtn);
     }
 
     public int getSelectedRadio(){
@@ -89,6 +95,8 @@ public class Gui {
     public void setAuxBtnAction(ActionListener auxBtnListener){
         startBtn.setActionCommand("start");
         startBtn.addActionListener(auxBtnListener);
+        infoBtn.setActionCommand("info");
+        infoBtn.addActionListener(auxBtnListener);
 
         for (int i=0; i<3;i++){
             newOrderBtns[i].addActionListener(auxBtnListener);
@@ -100,6 +108,11 @@ public class Gui {
 
         balanceBtn.setActionCommand("balance");
         balanceBtn.addActionListener(auxBtnListener);
+
+        closeBtn.setActionCommand("close");
+        closeBtn.addActionListener(auxBtnListener);
+
+
     }
     public void setCheckboxAction(ActionListener checkboxListener){
         for (JRadioButton jr:
@@ -110,6 +123,7 @@ public class Gui {
             scrapBox.setActionCommand("scrap");
             moveBox.addActionListener(checkboxListener);
             scrapBox.addActionListener(checkboxListener);
+
         }
     }
 
@@ -122,10 +136,12 @@ public class Gui {
         this.foot = new JPanel();
         this.foot.setLayout(new BorderLayout());
         this.startBtn = new JButton("START");
+        this.infoBtn = new JButton("HOW TO PLAY");
+        this.closeBtn = new JButton("OK");
         this.balanceBtn = new JButton("Show Balance");
         skipOrderBtn = new JButton("");
         skipOrderBtn.setVisible(false);
-        this.startBtn.setPreferredSize(new Dimension(100, 50));
+        infoBtn.setPreferredSize(new Dimension(800,150));
 
 
         JLabel logo = new JLabel(new ImageIcon("assets/logo.png"));
@@ -139,6 +155,7 @@ public class Gui {
         this.frame.add(head, BorderLayout.PAGE_START);
         this.frame.add(foot, BorderLayout.PAGE_END);
         frame.add(startBtn);
+        foot.add(infoBtn);
         this.frame.setLocationRelativeTo(null);
         this.frame.setVisible(true);
 
@@ -242,7 +259,11 @@ public class Gui {
 
     public void displayOrders() {
         moveBox = new JCheckBox("Move (-100$)");
+        moveBox.setIcon(new ImageIcon("assets/actions/move.png"));
+        moveBox.setSelectedIcon(new ImageIcon("assets/actions/move_active.png"));
         scrapBox = new JCheckBox("Scrap (-300$)");
+        scrapBox.setIcon(new ImageIcon("assets/actions/scrap.png"));
+        scrapBox.setSelectedIcon(new ImageIcon("assets/actions/scrap_active.png"));
         JPanel leftSide = new JPanel();
         JPanel rightSide = new JPanel();
         JPanel orderListPanel=new JPanel();
@@ -311,6 +332,26 @@ public class Gui {
             }
 
         }
+    }
+
+    public void showInfo() throws IOException {
+        tutorial=new JFrame("Tutorial");
+        tutorial.setSize(new Dimension(800,600));
+        tutorial.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        JTextArea text= new JTextArea();
+        FileReader reader = new FileReader("readme.txt");
+        text.read(reader,null);
+        text.setEnabled(false);
+
+
+        tutorial.add(text,BorderLayout.CENTER);
+        tutorial.add(closeBtn,BorderLayout.PAGE_END);
+        tutorial.setVisible(true);
+
+    }
+
+    public void hideInfo(){
+        tutorial.setVisible(false);
     }
 
 

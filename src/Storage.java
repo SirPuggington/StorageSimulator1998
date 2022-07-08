@@ -21,17 +21,13 @@ public class Storage {
     private boolean in(Order order, int x, int y, int z) {
 
         System.out.println(order.getProductAttributes());
+
         if (this.shelf[x][y][z] != null) {
-            System.out.println(this.shelf[x][y][z].getAttributes());
-        } else {
-            System.out.println("empty");
-        }
-        if (this.shelf[x][y][z] != null) {
-            //SLOT IS NOT EMPTY
+            logString="E: SLOT IS NOT EMPTY";
             return false;
         }
         if (z == 1 && this.shelf[x][y][0] != null && this.shelf[x][y][0] != order.getProduct()) {
-            //SLOT IS BLOCKED BY
+            logString="E: SLOT IS BLOCKED BY ANOTHER PALLET";
             return false;
         }
 
@@ -39,7 +35,7 @@ public class Storage {
         if (order.getProduct() instanceof Wood) {
             if (Objects.equals(((Wood) order.getProduct()).shape, "beam")) {
                 if (this.shelf[x][y][0] != null || this.shelf[x][y][1] != null) {
-                    //BEAMS NEED 2 EMPTY SLOTS
+                    logString="E: BEAMS NEED 2 EMPTY SLOTS";
                     return false;
                 }
                 this.shelf[x][y][0] = order.getProduct();
@@ -51,11 +47,11 @@ public class Storage {
         // SPECIAL CASES FOR TYPE: STONE
         if (order.getProduct() instanceof Stone) {
             if (((Stone) order.getProduct()).weight > 1 && y == 2) {
-                //STONES OF MEDIUM WEIGHT CAN NOT BE PLACED IN THE TOP ROW
+                logString="E: STONES OF MEDIUM WEIGHT CAN NOT BE PLACED IN THE TOP ROW";
                 return false;
             }
             if (((Stone) order.getProduct()).weight > 2 && y != 0) {
-                //STONES OF HEAVY WEIGHT MUST BE PLACED IN THE BOTTOM ROW
+                logString="E: STONES OF HEAVY WEIGHT MUST BE PLACED IN THE BOTTOM ROW";
                 return false;
 
             }
@@ -150,7 +146,6 @@ public class Storage {
 
 
         } else {
-            //NOTHING TO SCRAP
             logString = "E: NOTHING TO SCRAP";
             return false;
         }

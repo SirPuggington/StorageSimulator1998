@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Finances {
 
-    private ArrayList<String[]> financeLog = new ArrayList<>();
-    private String[] tableHeader = {"Action","Payment"};
+    private final ArrayList<String[]> financeLog = new ArrayList<>();
+    private final String[] tableHeader = {"Action","Payment"};
     private int funds;
 
     public Finances(){
@@ -14,7 +14,12 @@ public class Finances {
 
     public void updateFunds(int val, String desc){
         String[] logEntry = new String[2];
-        logEntry[0]= desc;
+        if (desc.startsWith("E:")||desc.startsWith("S:")){
+            logEntry[0]= desc.substring(3);
+        }else{
+            logEntry[0]= desc;
+        }
+
         logEntry[1]= String.valueOf(val);
 
         financeLog.add(logEntry);
@@ -49,8 +54,8 @@ public class Finances {
         JLabel totalText = new JLabel("Total Funds");
         JLabel totalMoney = new JLabel(Integer.toString(funds));
 
-//        totalText.setHorizontalAlignment(JLabel.CENTER);
-//        totalMoney.setHorizontalAlignment(JLabel.CENTER);
+        totalText.setHorizontalAlignment(JLabel.CENTER);
+        totalMoney.setHorizontalAlignment(JLabel.CENTER);
 
         balanceScroll.getViewport().add(balanceRecordsTable);
 

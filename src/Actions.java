@@ -2,11 +2,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Actions {
 
-    private final Gui gui;
+    private Gui gui;
     private final Finances finances;
     private final Storage storage;
     private final CsvImport imp;
@@ -26,15 +27,20 @@ public class Actions {
     private Order nextOrder;
     private Timer timer;
 
-    public Actions(Gui gui, Finances fin, Storage sto, CsvImport imp) {
-        this.gui = gui;
+    public Actions(Finances fin, Storage sto, CsvImport imp) {
+
         this.finances = fin;
         this.storage = sto;
         this.imp = imp;
+
+    }
+
+    public void openMainMenu() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        this.gui = new Gui();
         gui.setAuxBtnAction(auxBtnListener);
     }
 
-    public void startGame() throws FileNotFoundException {
+    private void startGame() throws FileNotFoundException {
         timer = new Timer(2500, auxBtnListener);
         successIcon = new ImageIcon("assets/success.png");
         errorIcon = new ImageIcon("assets/error.png");
@@ -51,7 +57,7 @@ public class Actions {
         gui.reload();
     }
 
-    public void getNextOrder() {
+    private void getNextOrder() {
 
         try {
             nextOrder = orders.get(nextOrderId);
@@ -61,7 +67,7 @@ public class Actions {
         }
     }
 
-    public void updateOrders() {
+    private void updateOrders() {
 
         nextOrderId = currentOrder.getId();
         if (availableOrders[0] != null) {
@@ -73,7 +79,7 @@ public class Actions {
         if (availableOrders[2] != null) {
             nextOrderId = Math.max(nextOrderId, availableOrders[2].getId());
         }
-        gui.setSkipBtnText("Skip selected Order (-" + currentOrder.getReward() + "$)");
+        gui.setSkipBtnText("Reject Selected Order (-" + currentOrder.getReward() + "$)");
 
 
         gui.reload();
@@ -140,14 +146,27 @@ public class Actions {
                 case "balance":
 
                     finances.openBalance(gui.getFrame());
+                    break;
 
                 case "timer":
 
-
-                    gui.setMessageLabelText("no messages");
+                    gui.setMessageLabelText("");
                     gui.setMessageLabelIcon(null);
-
                     timer.stop();
+                    break;
+
+                case "info":
+
+                    try {
+                        gui.showInfo();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
+
+                case "close":
+                    gui.hideInfo();
+
                 default:
                     //NEW ORDER BUTTONS
                     if (command.startsWith("new")) {
@@ -165,9 +184,9 @@ public class Actions {
                     }
 
             }
-
-            gui.setWallet(String.valueOf(finances.getFunds()));
-
+            if(!command.equals("info")&&(!command.equals("close"))) {
+                gui.setWallet(String.valueOf(finances.getFunds()));
+            }
         }
     };
 
@@ -233,6 +252,8 @@ public class Actions {
                         updateOrders();
                         gui.setSkipBtnText("");
                         currentOrder = null;
+                    }else{
+                        logString=storage.getLogString();
                     }
 
                 } else {

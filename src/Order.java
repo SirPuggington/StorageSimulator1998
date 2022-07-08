@@ -1,22 +1,7 @@
 import javax.swing.*;
 
-public class Order {
+public record Order(int id, boolean in, Product product, int reward) {
 
-
-
-    final private Product product;
-    final private boolean in;
-    final private int reward;
-    final private int id;
-
-
-    public Order(int id, boolean in, Product product, int reward){
-        this.id = id;
-        this.in = in;
-        this.product = product;
-        this.reward = reward;
-
-    }
 
     public Product getProduct() {
         return product;
@@ -34,21 +19,24 @@ public class Order {
         return id;
     }
 
-    public String getProductAttributes(){
+    public String getProductAttributes() {
         return product.getAttributes();
     }
-    public Icon getProductIcon(){
+
+    public Icon getProductIcon() {
         return product.getIcon();
     }
-    public Icon getSelectedProductIcon(){
+
+    public Icon getSelectedProductIcon() {
         return product.getSelectedIcon();
     }
-    public String getOrderInfo(){
+
+    public String getOrderInfo() {
         String orderInfo;
         if (in) {
-            orderInfo="INCOMING - " + getProductAttributes() + " - Reward: " + reward+"$";
+            orderInfo = "INCOMING - " + getProductAttributes() + " - Reward: " + reward + "$";
         } else {
-            orderInfo="OUTGOING - " + getProductAttributes() + " - Reward: " + reward+"$";
+            orderInfo = "OUTGOING - " + getProductAttributes() + " - Reward: " + reward + "$";
 
         }
         return orderInfo;
