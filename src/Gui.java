@@ -273,7 +273,7 @@ public class Gui {
         leftSide.setBorder(BorderFactory.createTitledBorder("ORDERS"));
         leftSide.setPreferredSize(new Dimension(800,90));
         modesPanel.setLayout(new GridLayout(2, 1));
-        modesPanel.setPreferredSize(new Dimension(100, 50));
+        modesPanel.setPreferredSize(new Dimension(120, 50));
         orderListPanel.setLayout(new GridLayout(3,1));
 
         modesPanel.add(moveBox);

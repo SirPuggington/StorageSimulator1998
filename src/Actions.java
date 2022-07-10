@@ -98,6 +98,7 @@ public class Actions {
                 }
                 case "move" -> {
                     moveMode = !moveMode;
+                    moveFrom=null;
                     scrapMode = false;
                     gui.setScrapBox(false);
                 }

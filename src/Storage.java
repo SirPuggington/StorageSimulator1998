@@ -46,7 +46,7 @@ public class Storage {
 
         // SPECIAL CASES FOR TYPE: STONE
         if (order.getProduct() instanceof Stone) {
-            if (((Stone) order.getProduct()).weight > 1 && y == 2) {
+            if (((Stone) order.getProduct()).weight == 2 && y == 2) {
                 logString="E: STONES OF MEDIUM WEIGHT CAN NOT BE PLACED IN THE TOP ROW";
                 return false;
             }
@@ -62,10 +62,6 @@ public class Storage {
     }
 
     private boolean out(Order order, int x, int y, int z) {
-
-        System.out.println(order.getProduct().getAttributes());
-        System.out.println(this.shelf[x][y][z].getAttributes());
-
         if (this.shelf[x][y][z] != null) {
             if (Objects.equals(order.getProduct().getAttributes(), this.shelf[x][y][z].getAttributes())) {
 
@@ -83,16 +79,17 @@ public class Storage {
                 }
 
                 this.shelf[x][y][z] = null;
-
+                return true;
             } else {
                 //WRONG PRODUCT SELECTED
                 logString = "E: WRONG PRODUCT SELECTED";
                 return false;
             }
         } else {
-            logString = "E: SHELF IS EMPTY";
+            logString = "E: SLOT IS EMPTY";
+            return false;
         }
-        return true;
+
     }
 
     public boolean move(int targetX, int targetY, int targetZ,
