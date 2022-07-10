@@ -51,11 +51,13 @@ public class Wood extends Product {
     public ImageIcon getIcon() {
         return icon;
     }
+
     public ImageIcon getSelectedIcon() {
         return selIcon;
     }
-    public ImageIcon getLargeIcon(){
-        return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));
+
+    public ImageIcon getLargeIcon() {
+        return new ImageIcon(icon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT));
     }
 
 }

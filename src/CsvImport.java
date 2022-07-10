@@ -17,7 +17,7 @@ public class CsvImport {
         while (sc.hasNextLine()) {
 
             current = sc.nextLine();
-            if (current.startsWith("A")){
+            if (current.startsWith("A")) {
                 continue;
             }
             Order order = this.stringToOrder(current);

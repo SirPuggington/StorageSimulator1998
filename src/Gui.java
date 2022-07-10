@@ -19,7 +19,7 @@ public class Gui {
     private JCheckBox moveBox;
     private JCheckBox scrapBox;
     private JLabel wallet;
-    private JLabel messageLabel =new JLabel();
+    private JLabel messageLabel = new JLabel();
     private final ButtonGroup availableOrders = new ButtonGroup();
     private final JPanel[] orderPanels = new JPanel[3];
     private final JButton[] storageSlots = new JButton[24];
@@ -27,7 +27,7 @@ public class Gui {
     private final JLabel[] storageSlotLabels = new JLabel[24];
     private final JRadioButton[] orderRadios = new JRadioButton[3];
 
-    public JFrame getFrame(){
+    public JFrame getFrame() {
         return frame;
     }
 
@@ -51,23 +51,23 @@ public class Gui {
         messageLabel.setIcon(icon);
     }
 
-    public void setSkipBtnText(String text){
+    public void setSkipBtnText(String text) {
         skipOrderBtn.setText(text);
         skipOrderBtn.setVisible(!Objects.equals(skipOrderBtn.getText(), ""));
     }
 
-    public void reload(){
+    public void reload() {
         SwingUtilities.updateComponentTreeUI(frame);
     }
 
-    public void removeStartBtn(){
+    public void removeStartBtn() {
         frame.remove(startBtn);
         foot.remove(infoBtn);
     }
 
-    public int getSelectedRadio(){
-        int i=0;
-        for (Enumeration<AbstractButton> buttons = availableOrders.getElements(); buttons.hasMoreElements();) {
+    public int getSelectedRadio() {
+        int i = 0;
+        for (Enumeration<AbstractButton> buttons = availableOrders.getElements(); buttons.hasMoreElements(); ) {
             AbstractButton button = buttons.nextElement();
 
             if (button.isSelected()) {
@@ -78,13 +78,13 @@ public class Gui {
         return -1;
     }
 
-    public void hideOrder(){
-        int index=getSelectedRadio();
+    public void hideOrder() {
+        int index = getSelectedRadio();
         orderRadios[index].setVisible(false);
         newOrderBtns[index].setVisible(true);
     }
 
-    public void newOrder(int index, Order nextOrder){
+    public void newOrder(int index, Order nextOrder) {
         newOrderBtns[index].setVisible(false);
         orderRadios[index].setIcon(nextOrder.getProductIcon());
         orderRadios[index].setSelectedIcon(nextOrder.getSelectedProductIcon());
@@ -92,15 +92,16 @@ public class Gui {
         orderRadios[index].setVisible(true);
         orderRadios[index].setSelected(true);
     }
-    public void setAuxBtnAction(ActionListener auxBtnListener){
+
+    public void setAuxBtnAction(ActionListener auxBtnListener) {
         startBtn.setActionCommand("start");
         startBtn.addActionListener(auxBtnListener);
         infoBtn.setActionCommand("info");
         infoBtn.addActionListener(auxBtnListener);
 
-        for (int i=0; i<3;i++){
+        for (int i = 0; i < 3; i++) {
             newOrderBtns[i].addActionListener(auxBtnListener);
-            newOrderBtns[i].setActionCommand("new "+i);
+            newOrderBtns[i].setActionCommand("new " + i);
         }
 
         skipOrderBtn.setActionCommand("skip");
@@ -114,9 +115,9 @@ public class Gui {
 
 
     }
-    public void setCheckboxAction(ActionListener checkboxListener){
-        for (JRadioButton jr:
-             orderRadios) {
+
+    public void setCheckboxAction(ActionListener checkboxListener) {
+        for (JRadioButton jr : orderRadios) {
             jr.setActionCommand("radio");
             jr.addActionListener(checkboxListener);
             moveBox.setActionCommand("move");
@@ -141,7 +142,7 @@ public class Gui {
         this.balanceBtn = new JButton("Show Balance");
         skipOrderBtn = new JButton("");
         skipOrderBtn.setVisible(false);
-        infoBtn.setPreferredSize(new Dimension(800,150));
+        infoBtn.setPreferredSize(new Dimension(800, 150));
 
 
         JLabel logo = new JLabel(new ImageIcon("assets/logo.png"));
@@ -160,13 +161,13 @@ public class Gui {
         this.frame.setVisible(true);
 
 
-        for (int i=0; i<3; i++){
-            orderRadios[i]=new JRadioButton();
-            newOrderBtns[i]=new JButton("New Order");
-            orderPanels[i]=new JPanel();
+        for (int i = 0; i < 3; i++) {
+            orderRadios[i] = new JRadioButton();
+            newOrderBtns[i] = new JButton("New Order");
+            orderPanels[i] = new JPanel();
             orderPanels[i].setLayout(new BorderLayout());
-            orderPanels[i].add(orderRadios[i],BorderLayout.CENTER);
-            orderPanels[i].add(newOrderBtns[i],BorderLayout.PAGE_END);
+            orderPanels[i].add(orderRadios[i], BorderLayout.CENTER);
+            orderPanels[i].add(newOrderBtns[i], BorderLayout.PAGE_END);
             orderRadios[i].setVisible(false);
             availableOrders.add(orderRadios[i]);
 
@@ -224,19 +225,17 @@ public class Gui {
                     slot.add(slotLabel, BorderLayout.PAGE_END);
 
 
-                    if (z == 0)
-                        switch (y) {
-                            case 2 -> frontPanel1.add(slot);
-                            case 1 -> frontPanel2.add(slot);
-                            case 0 -> frontPanel3.add(slot);
-                        }
+                    if (z == 0) switch (y) {
+                        case 2 -> frontPanel1.add(slot);
+                        case 1 -> frontPanel2.add(slot);
+                        case 0 -> frontPanel3.add(slot);
+                    }
 
-                    else
-                        switch (y) {
-                            case 2 -> backPanel1.add(slot);
-                            case 1 -> backPanel2.add(slot);
-                            case 0 -> backPanel3.add(slot);
-                        }
+                    else switch (y) {
+                        case 2 -> backPanel1.add(slot);
+                        case 1 -> backPanel2.add(slot);
+                        case 0 -> backPanel3.add(slot);
+                    }
 
                     this.storageSlots[i] = slotBtn;
                     this.storageSlotLabels[i] = slotLabel;
@@ -266,37 +265,36 @@ public class Gui {
         scrapBox.setSelectedIcon(new ImageIcon("assets/actions/scrap_active.png"));
         JPanel leftSide = new JPanel();
         JPanel rightSide = new JPanel();
-        JPanel orderListPanel=new JPanel();
+        JPanel orderListPanel = new JPanel();
         JPanel modesPanel = new JPanel();
         rightSide.setLayout(new BorderLayout());
         leftSide.setLayout(new GridLayout(1, 2));
         leftSide.setBorder(BorderFactory.createTitledBorder("ORDERS"));
-        leftSide.setPreferredSize(new Dimension(800,90));
+        leftSide.setPreferredSize(new Dimension(800, 90));
         modesPanel.setLayout(new GridLayout(2, 1));
         modesPanel.setPreferredSize(new Dimension(120, 50));
-        orderListPanel.setLayout(new GridLayout(3,1));
+        orderListPanel.setLayout(new GridLayout(3, 1));
 
         modesPanel.add(moveBox);
         modesPanel.add(scrapBox);
 
-        messageLabel=new JLabel("Welcome to Storage Simulator 1998");
-        messageLabel.setMinimumSize(new Dimension(0,16));
+        messageLabel = new JLabel("Welcome to Storage Simulator 1998");
+        messageLabel.setMinimumSize(new Dimension(0, 16));
         JPanel messagePanel = new JPanel();
         messagePanel.setBorder(BorderFactory.createTitledBorder("MESSAGES"));
-        messagePanel.setPreferredSize(new Dimension(800,50));
+        messagePanel.setPreferredSize(new Dimension(800, 50));
         messagePanel.add(messageLabel);
 
         rightSide.add(modesPanel, BorderLayout.LINE_END);
         rightSide.add(skipOrderBtn, BorderLayout.CENTER);
         leftSide.add(orderListPanel);
         leftSide.add(rightSide);
-        for (JPanel jp:
-                orderPanels) {
+        for (JPanel jp : orderPanels) {
             orderListPanel.add(jp);
 
         }
         this.foot.add(leftSide, BorderLayout.CENTER);
-        this.foot.add(messagePanel,BorderLayout.NORTH);
+        this.foot.add(messagePanel, BorderLayout.NORTH);
     }
 
     public void displayMoney(Finances finances) {
@@ -318,7 +316,6 @@ public class Gui {
     }
 
 
-
     public void updateStorage(Storage storage) {
         int[] coordsArr;
         for (int i = 0; i < 24; i++) {
@@ -335,25 +332,24 @@ public class Gui {
     }
 
     public void showInfo() throws IOException {
-        tutorial=new JFrame("Tutorial");
-        tutorial.setSize(new Dimension(800,600));
+        tutorial = new JFrame("Tutorial");
+        tutorial.setSize(new Dimension(800, 600));
         tutorial.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        JTextArea text= new JTextArea();
+        JTextArea text = new JTextArea();
         FileReader reader = new FileReader("readme.txt");
-        text.read(reader,null);
+        text.read(reader, null);
         text.setEnabled(false);
 
 
-        tutorial.add(text,BorderLayout.CENTER);
-        tutorial.add(closeBtn,BorderLayout.PAGE_END);
+        tutorial.add(text, BorderLayout.CENTER);
+        tutorial.add(closeBtn, BorderLayout.PAGE_END);
         tutorial.setVisible(true);
 
     }
 
-    public void hideInfo(){
+    public void hideInfo() {
         tutorial.setVisible(false);
     }
-
 
 
     public int[] slotToCoords(int i) {
@@ -379,7 +375,6 @@ public class Gui {
         panel.setLayout(new GridLayout(1, 4));
         panel.setBorder(BorderFactory.createEtchedBorder());
     }
-
 
 
 }

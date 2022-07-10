@@ -20,14 +20,13 @@ public class Storage {
 
     private boolean in(Order order, int x, int y, int z) {
 
-        System.out.println(order.getProductAttributes());
 
         if (this.shelf[x][y][z] != null) {
-            logString="E: SLOT IS NOT EMPTY";
+            logString = "E: SLOT IS NOT EMPTY";
             return false;
         }
         if (z == 1 && this.shelf[x][y][0] != null && this.shelf[x][y][0] != order.getProduct()) {
-            logString="E: SLOT IS BLOCKED BY ANOTHER PALLET";
+            logString = "E: SLOT IS BLOCKED BY ANOTHER PALLET";
             return false;
         }
 
@@ -35,7 +34,7 @@ public class Storage {
         if (order.getProduct() instanceof Wood) {
             if (Objects.equals(((Wood) order.getProduct()).shape, "beam")) {
                 if (this.shelf[x][y][0] != null || this.shelf[x][y][1] != null) {
-                    logString="E: BEAMS NEED 2 EMPTY SLOTS";
+                    logString = "E: BEAMS NEED 2 EMPTY SLOTS";
                     return false;
                 }
                 this.shelf[x][y][0] = order.getProduct();
@@ -47,11 +46,11 @@ public class Storage {
         // SPECIAL CASES FOR TYPE: STONE
         if (order.getProduct() instanceof Stone) {
             if (((Stone) order.getProduct()).weight == 2 && y == 2) {
-                logString="E: STONES OF MEDIUM WEIGHT CAN NOT BE PLACED IN THE TOP ROW";
+                logString = "E: STONES OF MEDIUM WEIGHT CAN NOT BE PLACED IN THE TOP ROW";
                 return false;
             }
             if (((Stone) order.getProduct()).weight > 2 && y != 0) {
-                logString="E: STONES OF HEAVY WEIGHT MUST BE PLACED IN THE BOTTOM ROW";
+                logString = "E: STONES OF HEAVY WEIGHT MUST BE PLACED IN THE BOTTOM ROW";
                 return false;
 
             }
@@ -92,8 +91,7 @@ public class Storage {
 
     }
 
-    public boolean move(int targetX, int targetY, int targetZ,
-                        int originX, int originY, int originZ) {
+    public boolean move(int targetX, int targetY, int targetZ, int originX, int originY, int originZ) {
 
 
         Order moveOrder = new Order(0, true, this.shelf[originX][originY][originZ], -100);

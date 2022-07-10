@@ -98,13 +98,13 @@ public class Actions {
                 }
                 case "move" -> {
                     moveMode = !moveMode;
-                    moveFrom=null;
+                    moveFrom = null;
                     scrapMode = false;
                     gui.setScrapBox(false);
                 }
                 case "radio" -> {
                     setCurrentOrder();
-                    System.out.println(currentOrder);
+
                     updateOrders();
                 }
             }
@@ -119,7 +119,7 @@ public class Actions {
 
             switch (command) {
                 case "skip":
-                    if (currentOrder!=null) {
+                    if (currentOrder != null) {
 
                         gui.hideOrder();
 
@@ -127,11 +127,11 @@ public class Actions {
                         logString = "SKIPPED: " + currentOrder.getProductAttributes();
                         finances.updateFunds(currentOrder.getReward() * (-1), logString);
                         updateOrders();
-                        currentOrder=null;
+                        currentOrder = null;
                         gui.setSkipBtnText("");
 
                     } else {
-                        logString="E: SELECT AN ORDER TO SKIP";
+                        logString = "E: SELECT AN ORDER TO SKIP";
                     }
 
                     break;
@@ -175,17 +175,17 @@ public class Actions {
 
                         int index = Integer.parseInt(command.split(" ")[1]);
 
-                        gui.newOrder(index,nextOrder);
+                        gui.newOrder(index, nextOrder);
                         availableOrders[index] = nextOrder;
                         setCurrentOrder();
 
                         updateOrders();
-                        System.out.println(nextOrder.getOrderInfo());
+
                         gui.reload();
                     }
 
             }
-            if(!command.equals("info")&&(!command.equals("close"))) {
+            if (!command.equals("info") && (!command.equals("close"))) {
                 gui.setWallet(String.valueOf(finances.getFunds()));
             }
         }
@@ -193,7 +193,7 @@ public class Actions {
 
     private void setCurrentOrder() {
         int orderIndex = gui.getSelectedRadio();
-        System.out.println(orderIndex);
+
         currentOrder = availableOrders[orderIndex];
     }
 
@@ -211,7 +211,7 @@ public class Actions {
             if (moveMode) {
                 if (moveFrom != null) {
 
-                    if (storage.move(x, y, z, moveFrom[0], moveFrom[1], moveFrom[2])){
+                    if (storage.move(x, y, z, moveFrom[0], moveFrom[1], moveFrom[2])) {
                         logString = storage.getLogString();
                         finances.updateFunds(-100, logString.substring(3));
                     }
@@ -236,12 +236,13 @@ public class Actions {
                     logString = storage.getLogString();
                     gui.updateStorage(storage);
                     finances.updateFunds(-300, logString.substring(3));
-                }logString = storage.getLogString();
+                }
+                logString = storage.getLogString();
             } else
                 //STANDARD MODE
                 if (currentOrder != null) {
                     if (storage.action(currentOrder, x, y, z)) {
-                        logString=storage.getLogString();
+                        logString = storage.getLogString();
                         gui.updateStorage(storage);
                         if (currentOrder.isIn()) {
                             logString = "S: STORED: " + currentOrder.getProductAttributes();
@@ -253,8 +254,8 @@ public class Actions {
                         updateOrders();
                         gui.setSkipBtnText("");
                         currentOrder = null;
-                    }else{
-                        logString=storage.getLogString();
+                    } else {
+                        logString = storage.getLogString();
                     }
 
                 } else {

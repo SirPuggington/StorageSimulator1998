@@ -1,9 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Stone extends Product{
+public class Stone extends Product {
 
-    String material="Stone";
+    String material = "Stone";
     String type;
     int weight;
     String weightString;
@@ -23,25 +23,25 @@ public class Stone extends Product{
         switch (weight.toLowerCase()) {
             case "leicht" -> {
                 this.weight = 1;
-                this.weightString="light";
+                this.weightString = "light";
             }
             case "mittel" -> {
                 this.weight = 2;
-                this.weightString="medium";
+                this.weightString = "medium";
             }
             case "schwer" -> {
                 this.weight = 3;
-                this.weightString="heavy";
+                this.weightString = "heavy";
             }
         }
-        this.icon=new ImageIcon("assets/stone/"+this.type+".png");
-        this.selIcon=new ImageIcon("assets/stone/"+this.type+"_selected.png");
+        this.icon = new ImageIcon("assets/stone/" + this.type + ".png");
+        this.selIcon = new ImageIcon("assets/stone/" + this.type + "_selected.png");
 
 
     }
 
-    public String getAttributes(){
-        return material+": "+this.weightString+" "+this.type;
+    public String getAttributes() {
+        return material + ": " + this.weightString + " " + this.type;
     }
 
     public String getAttributesShort() {
@@ -51,11 +51,13 @@ public class Stone extends Product{
     public ImageIcon getIcon() {
         return icon;
     }
+
     public ImageIcon getSelectedIcon() {
         return selIcon;
     }
-    public ImageIcon getLargeIcon(){
-        return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));
+
+    public ImageIcon getLargeIcon() {
+        return new ImageIcon(icon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT));
     }
 
 }

@@ -6,7 +6,7 @@ public class Product {
     ImageIcon icon;
 
     public Product() {
-        icon=new ImageIcon("");
+        icon = new ImageIcon("");
     }
 
     public String getAttributes() {
@@ -22,8 +22,8 @@ public class Product {
         return "";
     }
 
-    public ImageIcon getLargeIcon(){
-        return new ImageIcon(icon.getImage().getScaledInstance(32,32, Image.SCALE_DEFAULT));
+    public ImageIcon getLargeIcon() {
+        return new ImageIcon(icon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT));
     }
 
     public Icon getSelectedIcon() {
